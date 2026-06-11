@@ -9,3 +9,10 @@ dist-ssr
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Python / backend
+backend/.venv
+__pycache__/
+*.pyc
+backend/.env
+*.db
