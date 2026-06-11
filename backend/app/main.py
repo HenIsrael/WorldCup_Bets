@@ -1,3 +1,4 @@
+import logging
 import secrets
 from contextlib import asynccontextmanager
 
@@ -9,7 +10,10 @@ from sqlalchemy.orm import Session
 from . import crud
 from .config import settings
 from .database import Base, engine, get_db
-from .schemas import MatchPredictionCreate, MatchPredictionRead
+from .poisson import predict_score
+from .schemas import MatchPredictionCreate, MatchPredictionRead, MatchScoreRead
+
+logger = logging.getLogger("uvicorn.error")
 
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
@@ -72,6 +76,34 @@ def get_prediction(game_id: str, db: Session = Depends(get_db)) -> MatchPredicti
             detail=f"No prediction found for game_id '{game_id}'",
         )
     return prediction
+
+
+@app.get(
+    "/predictions/{game_id}/score",
+    response_model=MatchScoreRead,
+    tags=["predictions"],
+    dependencies=[Depends(require_admin)],
+)
+def get_score(game_id: str, db: Session = Depends(get_db)) -> MatchScoreRead:
+    prediction = crud.get_prediction(db, game_id)
+    if prediction is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No prediction found for game_id '{game_id}'",
+        )
+
+    result = predict_score(prediction)
+    top5_str = ", ".join(
+        f"{s.home}-{s.away} ({s.prob * 100:.1f}%)" for s in result.top5
+    )
+    logger.info(
+        "[Bet] game %s | lambda_home=%.2f lambda_away=%.2f | top 5: %s",
+        game_id,
+        result.lambda_home,
+        result.lambda_away,
+        top5_str,
+    )
+    return MatchScoreRead(home=result.home, away=result.away)
 
 
 @app.put(

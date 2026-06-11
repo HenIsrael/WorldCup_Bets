@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import type { MatchPrediction, Team } from '../types'
 import type { MatchView } from '../utils/date'
-import { getWinnerPrediction } from '../api'
+import { getBetScore, getWinnerPrediction } from '../api'
 import { formatLocalTime } from '../utils/timezone'
+import { useSecretKey } from '../hooks/useSecretKey'
+import UnlockModal from './UnlockModal'
 
 interface MatchCardProps {
   match: MatchView
@@ -75,6 +77,26 @@ export default function MatchCard({ match, teamsById }: MatchCardProps) {
     }
   }
 
+  const { unlocked, key, showModal, openModal, closeModal, tryUnlock, lock } = useSecretKey()
+
+  const [betLoading, setBetLoading] = useState(false)
+
+  const handleBet = async () => {
+    if (betLoading) return
+    setBetLoading(true)
+    setPredError('')
+    try {
+      const { home, away } = await getBetScore(game.id, key)
+      setHomeScore(String(home))
+      setAwayScore(String(away))
+    } catch (err) {
+      setPredError(err instanceof Error ? err.message : 'Failed to compute bet.')
+      setPredState('error')
+    } finally {
+      setBetLoading(false)
+    }
+  }
+
   return (
     <article className="match-card">
       <header className="match-card__meta">
@@ -134,7 +156,42 @@ export default function MatchCard({ match, teamsById }: MatchCardProps) {
             '🏆 Winner'
           )}
         </button>
+        {unlocked ? (
+          <>
+            <button
+              className="btn btn--bet"
+              onClick={() => void handleBet()}
+              disabled={betLoading}
+              aria-busy={betLoading}
+            >
+              {betLoading ? (
+                <><span className="spinner spinner--sm" aria-hidden="true" /> Betting…</>
+              ) : (
+                <><span aria-hidden="true">＋</span> Bet</>
+              )}
+            </button>
+            <button
+              className="btn btn--lock"
+              onClick={lock}
+              title="Lock Bet button"
+              aria-label="Lock Bet button"
+            >
+              🔓
+            </button>
+          </>
+        ) : (
+          <button
+            className="btn btn--locked"
+            onClick={openModal}
+            title="Unlock to use Bet"
+            aria-label="Unlock Bet button"
+          >
+            🔒 Bet
+          </button>
+        )}
       </div>
+
+      {showModal && <UnlockModal onUnlock={tryUnlock} onClose={closeModal} />}
 
       {predState === 'error' && (
         <div className="pred-error">{predError}</div>

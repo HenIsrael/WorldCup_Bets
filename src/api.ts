@@ -2,6 +2,7 @@ import type {
   Game,
   GamesResponse,
   MatchPrediction,
+  MatchScore,
   Stadium,
   StadiumsResponse,
   Team,
@@ -45,4 +46,16 @@ export async function getWinnerPrediction(gameId: string): Promise<MatchPredicti
     throw new Error(`Request failed (${res.status})`)
   }
   return (await res.json()) as MatchPrediction
+}
+
+export async function getBetScore(gameId: string, apiKey: string): Promise<MatchScore> {
+  const res = await fetch(`${BACKEND}/predictions/${encodeURIComponent(gameId)}/score`, {
+    headers: { Accept: 'application/json', 'X-API-Key': apiKey },
+  })
+  if (!res.ok) {
+    if (res.status === 401) throw new Error('Invalid API key.')
+    if (res.status === 404) throw new Error('No prediction found for this game.')
+    throw new Error(`Request failed (${res.status})`)
+  }
+  return (await res.json()) as MatchScore
 }

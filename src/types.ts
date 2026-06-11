@@ -72,3 +72,8 @@ export interface MatchPrediction {
   under_2_5: number
   updated_at: string
 }
+
+export interface MatchScore {
+  home: number
+  away: number
+}

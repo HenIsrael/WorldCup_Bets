@@ -26,3 +26,10 @@ class MatchPredictionRead(MatchPredictionBase):
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class MatchScoreRead(BaseModel):
+    """Predicted scoreline for a match (full ranking is logged server-side only)."""
+
+    home: int
+    away: int
