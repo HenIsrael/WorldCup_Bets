@@ -1,6 +1,7 @@
 import type {
   Game,
   GamesResponse,
+  MatchPrediction,
   Stadium,
   StadiumsResponse,
   Team,
@@ -8,6 +9,7 @@ import type {
 } from './types'
 
 const BASE = '/api'
+const BACKEND = '/backend'
 
 async function getJson<T>(path: string): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
@@ -32,4 +34,15 @@ export async function getTeams(): Promise<Team[]> {
 export async function getStadiums(): Promise<Stadium[]> {
   const data = await getJson<StadiumsResponse>('/get/stadiums')
   return data.stadiums ?? []
+}
+
+export async function getWinnerPrediction(gameId: string): Promise<MatchPrediction> {
+  const res = await fetch(`${BACKEND}/predictions/${encodeURIComponent(gameId)}`, {
+    headers: { Accept: 'application/json' },
+  })
+  if (!res.ok) {
+    if (res.status === 404) throw new Error('No prediction found for this game.')
+    throw new Error(`Request failed (${res.status})`)
+  }
+  return (await res.json()) as MatchPrediction
 }

@@ -108,11 +108,31 @@
   align-items: center;
   gap: 12px;
   min-width: 0;
+  /* flag aligns to center of the info column */
 }
 
 .team--away {
   flex-direction: row-reverse;
   text-align: right;
+}
+
+.team__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.team__role {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 1px;
+}
+
+.team--away .team__info {
+  align-items: flex-end;
 }
 
 .team__name {
@@ -283,6 +303,96 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Winner button row */
+.match-card__winner-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.btn--winner {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0b1020;
+  background: linear-gradient(135deg, #f7c948, #f0a500);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 4px 14px rgba(240, 165, 0, 0.3);
+}
+
+.btn--winner:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.btn--winner:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spinner--sm {
+  width: 14px;
+  height: 14px;
+  border-width: 2px;
+}
+
+/* Prediction result row */
+.pred-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(109, 139, 255, 0.07);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+}
+
+.pred-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 80px;
+  gap: 3px;
+  padding: 8px 6px;
+  background: var(--bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+}
+
+.pred-cell__label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.pred-cell__value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Prediction error */
+.pred-error {
+  margin-top: 10px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  color: var(--danger);
+  background: rgba(255, 80, 80, 0.08);
+  border: 1px solid rgba(255, 80, 80, 0.2);
+  border-radius: 8px;
+  text-align: center;
 }
 
 /* Responsive */

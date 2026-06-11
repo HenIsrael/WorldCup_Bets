@@ -13,9 +13,9 @@ class MatchPrediction(Base):
 
     game_id: Mapped[str] = mapped_column(String, primary_key=True)
 
-    host_win: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
+    home_win: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
     draw: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
-    guest_win: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
+    away_win: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
 
     goals_0_1: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
     goals_2_3: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)

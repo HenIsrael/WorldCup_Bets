@@ -29,6 +29,10 @@ export interface Game {
   home_team_name_fa: string
   away_team_name_en: string
   away_team_name_fa: string
+  /** Knockout-stage placeholder, e.g. "Winner Group A" */
+  home_team_label?: string
+  /** Knockout-stage placeholder, e.g. "Runner-up Group B" */
+  away_team_label?: string
 }
 
 export interface Stadium {
@@ -55,4 +59,16 @@ export interface TeamsResponse {
 
 export interface StadiumsResponse {
   stadiums: Stadium[]
+}
+
+export interface MatchPrediction {
+  home_win: number
+  draw: number
+  away_win: number
+  goals_0_1: number
+  goals_2_3: number
+  goals_4_plus: number
+  over_2_5: number
+  under_2_5: number
+  updated_at: string
 }
