@@ -213,6 +213,63 @@
   filter: brightness(1.05);
 }
 
+.btn--outline {
+  color: var(--accent);
+  background: transparent;
+  border: 1.5px solid var(--accent);
+  margin-top: 0;
+}
+
+.btn--outline:hover {
+  background: rgba(61, 220, 151, 0.08);
+  filter: none;
+}
+
+/* Show-all-games toggle row */
+.all-games-toggle {
+  display: flex;
+  justify-content: center;
+  padding: 28px 0 8px;
+}
+
+/* All games list */
+.all-games {
+  display: grid;
+  gap: 40px;
+  margin-top: 8px;
+}
+
+/* Day group */
+.day-group__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.day-group__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.day-group__title--today {
+  color: var(--accent);
+}
+
+.day-group__count {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
 .spinner {
   width: 28px;
   height: 28px;

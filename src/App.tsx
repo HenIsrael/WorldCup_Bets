@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getGames, getStadiums, getTeams } from './api'
 import type { Game, Stadium, Team } from './types'
-import { matchesForDay, toMatchViews, todayKey } from './utils/date'
+import { groupByDay, matchesForDay, toMatchViews, todayKey } from './utils/date'
 import { userTimeZone } from './utils/timezone'
 import MatchList from './components/MatchList'
+import AllGamesList from './components/AllGamesList'
 import './App.css'
 
 type Status = 'loading' | 'ready' | 'error'
@@ -67,6 +68,15 @@ export default function App() {
     [],
   )
 
+  const allMatchViews = useMemo(
+    () => toMatchViews(games, stadiumsById),
+    [games, stadiumsById],
+  )
+
+  const allGroups = useMemo(() => groupByDay(allMatchViews), [allMatchViews])
+
+  const [showAll, setShowAll] = useState(false)
+
   const tzName = useMemo(() => userTimeZone(), [])
 
   return (
@@ -111,6 +121,22 @@ export default function App() {
 
         {status === 'ready' && todaysMatches.length > 0 && (
           <MatchList matches={todaysMatches} teamsById={teamsById} />
+        )}
+
+        {status === 'ready' && (
+          <div className="all-games-toggle">
+            <button
+              className="btn btn--outline"
+              onClick={() => setShowAll((v) => !v)}
+              aria-expanded={showAll}
+            >
+              {showAll ? '▲ Hide all games' : '▼ Show all games'}
+            </button>
+          </div>
+        )}
+
+        {status === 'ready' && showAll && (
+          <AllGamesList groups={allGroups} teamsById={teamsById} todayKey={today} />
         )}
       </main>
     </div>

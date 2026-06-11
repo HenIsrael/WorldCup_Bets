@@ -8,14 +8,15 @@ interface MatchCardProps {
   teamsById: Map<string, Team>
 }
 
-function TeamFlag({ team, name }: { team: Team | undefined; name: string }) {
+function TeamFlag({ team, name }: { team: Team | undefined; name: string | undefined }) {
   const [errored, setErrored] = useState(false)
+  const label = name ?? '?'
   if (team?.flag && !errored) {
     return (
       <img
         className="team-flag"
         src={team.flag}
-        alt={`${name} flag`}
+        alt={`${label} flag`}
         loading="lazy"
         onError={() => setErrored(true)}
       />
@@ -23,7 +24,7 @@ function TeamFlag({ team, name }: { team: Team | undefined; name: string }) {
   }
   return (
     <span className="team-flag team-flag--fallback" aria-hidden="true">
-      {name.slice(0, 2).toUpperCase()}
+      {label.slice(0, 2).toUpperCase() || '?'}
     </span>
   )
 }
@@ -38,6 +39,8 @@ export default function MatchCard({ match, teamsById }: MatchCardProps) {
 
   const sanitize = (value: string) => value.replace(/[^0-9]/g, '').slice(0, 2)
 
+  const homeName = game.home_team_name_en || 'TBD'
+  const awayName = game.away_team_name_en || 'TBD'
   const kickoff = instant ? formatLocalTime(instant) : 'TBD'
   const venue = stadium ? `${stadium.city_en}, ${stadium.country_en}` : null
 
@@ -51,8 +54,8 @@ export default function MatchCard({ match, teamsById }: MatchCardProps) {
 
       <div className="match-card__body">
         <div className="team team--home">
-          <TeamFlag team={homeTeam} name={game.home_team_name_en} />
-          <span className="team__name">{game.home_team_name_en}</span>
+          <TeamFlag team={homeTeam} name={homeName} />
+          <span className="team__name">{homeName}</span>
         </div>
 
         <div className="prediction">
@@ -60,7 +63,7 @@ export default function MatchCard({ match, teamsById }: MatchCardProps) {
             className="score-box"
             inputMode="numeric"
             placeholder="-"
-            aria-label={`${game.home_team_name_en} predicted score`}
+            aria-label={`${homeName} predicted score`}
             value={homeScore}
             onChange={(e) => setHomeScore(sanitize(e.target.value))}
           />
@@ -69,15 +72,15 @@ export default function MatchCard({ match, teamsById }: MatchCardProps) {
             className="score-box"
             inputMode="numeric"
             placeholder="-"
-            aria-label={`${game.away_team_name_en} predicted score`}
+            aria-label={`${awayName} predicted score`}
             value={awayScore}
             onChange={(e) => setAwayScore(sanitize(e.target.value))}
           />
         </div>
 
         <div className="team team--away">
-          <TeamFlag team={awayTeam} name={game.away_team_name_en} />
-          <span className="team__name">{game.away_team_name_en}</span>
+          <TeamFlag team={awayTeam} name={awayName} />
+          <span className="team__name">{awayName}</span>
         </div>
       </div>
     </article>

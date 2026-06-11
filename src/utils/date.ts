@@ -54,3 +54,49 @@ export function matchesForDay(
     .filter((v) => v.instant !== null && localDayKey(v.instant) === dayKey)
     .sort((a, b) => a.instant!.getTime() - b.instant!.getTime())
 }
+
+export interface DayGroup {
+  /** "YYYY-MM-DD" day key in the user's local time zone. */
+  dayKey: string
+  /** The kickoff instant of the first match, used for display formatting. */
+  representativeDate: Date
+  matches: MatchView[]
+}
+
+/**
+ * Groups all match views by their local day (user timezone), sorted
+ * chronologically. Matches without a parseable instant are placed last.
+ */
+export function groupByDay(views: MatchView[]): DayGroup[] {
+  const map = new Map<string, MatchView[]>()
+  const withoutInstant: MatchView[] = []
+
+  for (const v of views) {
+    if (!v.instant) {
+      withoutInstant.push(v)
+      continue
+    }
+    const key = localDayKey(v.instant)
+    const group = map.get(key)
+    if (group) group.push(v)
+    else map.set(key, [v])
+  }
+
+  const groups: DayGroup[] = Array.from(map.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([dayKey, matches]) => ({
+      dayKey,
+      representativeDate: matches[0].instant!,
+      matches: matches.sort((a, b) => a.instant!.getTime() - b.instant!.getTime()),
+    }))
+
+  if (withoutInstant.length > 0) {
+    groups.push({
+      dayKey: 'unknown',
+      representativeDate: new Date(0),
+      matches: withoutInstant,
+    })
+  }
+
+  return groups
+}
