@@ -4,17 +4,17 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class MatchPredictionBase(BaseModel):
-    # Stored as decimal odds (>= 1.0 typically). Only require non-negative values.
-    host_win_prob: float = Field(..., ge=0.0)
-    draw_prob: float = Field(..., ge=0.0)
-    guest_win_prob: float = Field(..., ge=0.0)
+    # Decimal odds (>= 0). No upper bound.
+    host_win: float = Field(..., ge=0.0)
+    draw: float = Field(..., ge=0.0)
+    guest_win: float = Field(..., ge=0.0)
 
-    goals_0_1_prob: float = Field(..., ge=0.0)
-    goals_2_3_prob: float = Field(..., ge=0.0)
-    goals_4_plus_prob: float = Field(..., ge=0.0)
+    goals_0_1: float = Field(..., ge=0.0)
+    goals_2_3: float = Field(..., ge=0.0)
+    goals_4_plus: float = Field(..., ge=0.0)
 
-    over_2_5_prob: float = Field(..., ge=0.0)
-    under_2_5_prob: float = Field(..., ge=0.0)
+    over_2_5: float = Field(..., ge=0.0)
+    under_2_5: float = Field(..., ge=0.0)
 
 
 class MatchPredictionCreate(MatchPredictionBase):

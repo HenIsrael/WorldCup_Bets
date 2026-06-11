@@ -7,22 +7,22 @@ from .database import Base
 
 
 class MatchPrediction(Base):
-    """Probability set for a single game, keyed by the external game id."""
+    """Odds set for a single game, keyed by the external game id."""
 
     __tablename__ = "match_predictions"
 
     game_id: Mapped[str] = mapped_column(String, primary_key=True)
 
-    host_win_prob: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
-    draw_prob: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
-    guest_win_prob: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
+    host_win: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
+    draw: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
+    guest_win: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
 
-    goals_0_1_prob: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
-    goals_2_3_prob: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
-    goals_4_plus_prob: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
+    goals_0_1: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
+    goals_2_3: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
+    goals_4_plus: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
 
-    over_2_5_prob: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
-    under_2_5_prob: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
+    over_2_5: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
+    under_2_5: Mapped[float] = mapped_column(Numeric(5, 4), nullable=False)
 
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
