@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { getGames, getTeams } from './api'
-import type { Game, Team } from './types'
-import { gamesForDay, todayKey } from './utils/date'
+import { getGames, getStadiums, getTeams } from './api'
+import type { Game, Stadium, Team } from './types'
+import { matchesForDay, toMatchViews, todayKey } from './utils/date'
+import { userTimeZone } from './utils/timezone'
 import MatchList from './components/MatchList'
 import './App.css'
 
@@ -10,6 +11,7 @@ type Status = 'loading' | 'ready' | 'error'
 export default function App() {
   const [games, setGames] = useState<Game[]>([])
   const [teams, setTeams] = useState<Team[]>([])
+  const [stadiums, setStadiums] = useState<Stadium[]>([])
   const [status, setStatus] = useState<Status>('loading')
   const [error, setError] = useState<string>('')
 
@@ -17,9 +19,14 @@ export default function App() {
     setStatus('loading')
     setError('')
     try {
-      const [gamesData, teamsData] = await Promise.all([getGames(), getTeams()])
+      const [gamesData, teamsData, stadiumsData] = await Promise.all([
+        getGames(),
+        getTeams(),
+        getStadiums(),
+      ])
       setGames(gamesData)
       setTeams(teamsData)
+      setStadiums(stadiumsData)
       setStatus('ready')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
@@ -37,8 +44,17 @@ export default function App() {
     return map
   }, [teams])
 
+  const stadiumsById = useMemo(() => {
+    const map = new Map<string, Stadium>()
+    for (const stadium of stadiums) map.set(stadium.id, stadium)
+    return map
+  }, [stadiums])
+
   const today = todayKey()
-  const todaysGames = useMemo(() => gamesForDay(games, today), [games, today])
+  const todaysMatches = useMemo(
+    () => matchesForDay(toMatchViews(games, stadiumsById), today),
+    [games, stadiumsById, today],
+  )
 
   const prettyDate = useMemo(
     () =>
@@ -51,6 +67,8 @@ export default function App() {
     [],
   )
 
+  const tzName = useMemo(() => userTimeZone(), [])
+
   return (
     <div className="app">
       <header className="app__header">
@@ -59,6 +77,9 @@ export default function App() {
           <div>
             <h1 className="app__title">World Cup 2026 Predictions</h1>
             <p className="app__subtitle">Today&apos;s matches &middot; {prettyDate}</p>
+            {tzName ? (
+              <p className="app__tz">Kickoff times shown in your local time ({tzName})</p>
+            ) : null}
           </div>
         </div>
       </header>
@@ -81,15 +102,15 @@ export default function App() {
           </div>
         )}
 
-        {status === 'ready' && todaysGames.length === 0 && (
+        {status === 'ready' && todaysMatches.length === 0 && (
           <div className="state state--empty">
             <p>No matches scheduled today.</p>
             <p className="state__detail">Check back on a match day.</p>
           </div>
         )}
 
-        {status === 'ready' && todaysGames.length > 0 && (
-          <MatchList games={todaysGames} teamsById={teamsById} />
+        {status === 'ready' && todaysMatches.length > 0 && (
+          <MatchList matches={todaysMatches} teamsById={teamsById} />
         )}
       </main>
     </div>

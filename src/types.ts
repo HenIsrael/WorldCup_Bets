@@ -31,10 +31,28 @@ export interface Game {
   away_team_name_fa: string
 }
 
+export interface Stadium {
+  _id: string
+  id: string
+  name_en: string
+  name_fa: string
+  fifa_name: string
+  city_en: string
+  city_fa: string
+  country_en: string
+  country_fa: string
+  capacity: number
+  region: string
+}
+
 export interface GamesResponse {
   games: Game[]
 }
 
 export interface TeamsResponse {
   teams: Team[]
+}
+
+export interface StadiumsResponse {
+  stadiums: Stadium[]
 }

@@ -1,4 +1,11 @@
-import type { Game, GamesResponse, Team, TeamsResponse } from './types'
+import type {
+  Game,
+  GamesResponse,
+  Stadium,
+  StadiumsResponse,
+  Team,
+  TeamsResponse,
+} from './types'
 
 const BASE = '/api'
 
@@ -20,4 +27,9 @@ export async function getGames(): Promise<Game[]> {
 export async function getTeams(): Promise<Team[]> {
   const data = await getJson<TeamsResponse>('/get/teams')
   return data.teams ?? []
+}
+
+export async function getStadiums(): Promise<Stadium[]> {
+  const data = await getJson<StadiumsResponse>('/get/stadiums')
+  return data.stadiums ?? []
 }

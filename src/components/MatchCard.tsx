@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import type { Game, Team } from '../types'
-import { gameTime } from '../utils/date'
+import type { Team } from '../types'
+import type { MatchView } from '../utils/date'
+import { formatLocalTime } from '../utils/timezone'
 
 interface MatchCardProps {
-  game: Game
+  match: MatchView
   teamsById: Map<string, Team>
 }
 
@@ -27,7 +28,8 @@ function TeamFlag({ team, name }: { team: Team | undefined; name: string }) {
   )
 }
 
-export default function MatchCard({ game, teamsById }: MatchCardProps) {
+export default function MatchCard({ match, teamsById }: MatchCardProps) {
+  const { game, instant, stadium } = match
   const [homeScore, setHomeScore] = useState('')
   const [awayScore, setAwayScore] = useState('')
 
@@ -36,10 +38,14 @@ export default function MatchCard({ game, teamsById }: MatchCardProps) {
 
   const sanitize = (value: string) => value.replace(/[^0-9]/g, '').slice(0, 2)
 
+  const kickoff = instant ? formatLocalTime(instant) : 'TBD'
+  const venue = stadium ? `${stadium.city_en}, ${stadium.country_en}` : null
+
   return (
     <article className="match-card">
       <header className="match-card__meta">
-        <span className="match-card__time">{gameTime(game) || 'TBD'}</span>
+        <span className="match-card__time">{kickoff}</span>
+        {venue ? <span className="match-card__venue">{venue}</span> : null}
         {game.group ? <span className="match-card__group">Group {game.group}</span> : null}
       </header>
 

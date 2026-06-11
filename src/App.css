@@ -39,6 +39,12 @@
   font-size: 0.9rem;
 }
 
+.app__tz {
+  margin: 2px 0 0;
+  color: var(--accent);
+  font-size: 0.78rem;
+}
+
 /* Match list */
 .match-list {
   display: grid;
@@ -63,9 +69,23 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   margin-bottom: 14px;
   font-size: 0.78rem;
   color: var(--text-muted);
+}
+
+.match-card__time {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.match-card__venue {
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .match-card__group {

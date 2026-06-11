@@ -1,16 +1,17 @@
-import type { Game, Team } from '../types'
+import type { Team } from '../types'
+import type { MatchView } from '../utils/date'
 import MatchCard from './MatchCard'
 
 interface MatchListProps {
-  games: Game[]
+  matches: MatchView[]
   teamsById: Map<string, Team>
 }
 
-export default function MatchList({ games, teamsById }: MatchListProps) {
+export default function MatchList({ matches, teamsById }: MatchListProps) {
   return (
     <div className="match-list">
-      {games.map((game) => (
-        <MatchCard key={game.id} game={game} teamsById={teamsById} />
+      {matches.map((match) => (
+        <MatchCard key={match.game.id} match={match} teamsById={teamsById} />
       ))}
     </div>
   )
