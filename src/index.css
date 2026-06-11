@@ -1,0 +1,34 @@
+:root {
+  --bg: #0b1020;
+  --bg-soft: #131a2e;
+  --card: #182039;
+  --card-border: #273253;
+  --text: #eef2ff;
+  --text-muted: #9aa6c7;
+  --accent: #3ddc97;
+  --accent-2: #6d8bff;
+  --danger: #ff6b6b;
+
+  color-scheme: dark;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(109, 139, 255, 0.18), transparent 60%),
+    radial-gradient(1000px 500px at -10% 10%, rgba(61, 220, 151, 0.12), transparent 55%),
+    var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
