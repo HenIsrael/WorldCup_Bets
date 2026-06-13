@@ -5,6 +5,7 @@ import { groupByDay, matchesForDay, toMatchViews, todayKey } from './utils/date'
 import { userTimeZone } from './utils/timezone'
 import MatchList from './components/MatchList'
 import AllGamesList from './components/AllGamesList'
+import FinishedGamesList from './components/FinishedGamesList'
 import './App.css'
 
 type Status = 'loading' | 'ready' | 'error'
@@ -53,7 +54,10 @@ export default function App() {
 
   const today = todayKey()
   const todaysMatches = useMemo(
-    () => matchesForDay(toMatchViews(games, stadiumsById), today),
+    () =>
+      matchesForDay(toMatchViews(games, stadiumsById), today).filter(
+        (v) => v.game.finished !== 'TRUE',
+      ),
     [games, stadiumsById, today],
   )
 
@@ -73,9 +77,27 @@ export default function App() {
     [games, stadiumsById],
   )
 
-  const allGroups = useMemo(() => groupByDay(allMatchViews), [allMatchViews])
+  const upcomingMatchViews = useMemo(
+    () => allMatchViews.filter((v) => v.game.finished !== 'TRUE'),
+    [allMatchViews],
+  )
+
+  const allGroups = useMemo(() => groupByDay(upcomingMatchViews), [upcomingMatchViews])
+
+  const finishedMatches = useMemo(
+    () =>
+      allMatchViews
+        .filter((v) => v.game.finished === 'TRUE')
+        .sort((a, b) => {
+          const at = a.instant?.getTime() ?? -Infinity
+          const bt = b.instant?.getTime() ?? -Infinity
+          return bt - at
+        }),
+    [allMatchViews],
+  )
 
   const [showAll, setShowAll] = useState(false)
+  const [showFinished, setShowFinished] = useState(false)
 
   const tzName = useMemo(() => userTimeZone(), [])
 
@@ -132,11 +154,22 @@ export default function App() {
             >
               {showAll ? '▲ Hide all games' : '▼ Show all games'}
             </button>
+            <button
+              className="btn btn--outline"
+              onClick={() => setShowFinished((v) => !v)}
+              aria-expanded={showFinished}
+            >
+              {showFinished ? '▲ Hide finished' : '🏁 Finished'}
+            </button>
           </div>
         )}
 
         {status === 'ready' && showAll && (
           <AllGamesList groups={allGroups} teamsById={teamsById} todayKey={today} />
+        )}
+
+        {status === 'ready' && showFinished && (
+          <FinishedGamesList matches={finishedMatches} teamsById={teamsById} />
         )}
       </main>
     </div>
