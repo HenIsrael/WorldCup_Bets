@@ -11,7 +11,9 @@ class MatchPrediction(Base):
 
     __tablename__ = "match_predictions"
 
-    game_id: Mapped[str] = mapped_column(String, primary_key=True)
+    game_id: Mapped[str] = mapped_column(String(100), primary_key=True)
+    home_team: Mapped[str] = mapped_column(String(100), nullable=False)
+    away_team: Mapped[str] = mapped_column(String(100), nullable=False)
 
     home_win: Mapped[float] = mapped_column(Numeric(8, 2), nullable=False)
     draw: Mapped[float] = mapped_column(Numeric(8, 2), nullable=False)

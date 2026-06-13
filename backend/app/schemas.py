@@ -4,6 +4,9 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class MatchPredictionBase(BaseModel):
+    home_team: str = Field(..., max_length=100)
+    away_team: str = Field(..., max_length=100)
+
     # Decimal odds (>= 0). No upper bound.
     home_win: float = Field(..., ge=0.0)
     draw: float = Field(..., ge=0.0)
